@@ -27,11 +27,11 @@ function love.load()
   math.randomseed(os.time())
   
   -- graphics
-  smallFont = love.graphics.newFont("DepartureMono-Regular.otf", 11)
+  smallFont = love.graphics.newFont("assets/DepartureMono-Regular.otf", 11)
   love.graphics.setFont(smallFont)
   
-  bgImg = love.graphics.newImage("bg.png")
-  scanlines = love.graphics.newImage("scanlines.png")
+  bgImg = love.graphics.newImage("assets/bg.png")
+  scanlines = love.graphics.newImage("assets/scanlines.png")
   
 end
 

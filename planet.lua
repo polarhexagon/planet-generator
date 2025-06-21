@@ -79,6 +79,25 @@ function Planet:new()
   self.x = VIRTUAL_WIDTH - 100
   self.y = VIRTUAL_HEIGHT - 100
   self.pixelRadius = 80
+  self.ballSheet = love.graphics.newImage("assets/ballSheet.png")
+  self.border = love.graphics.newImage("assets/border.png")
+  self.balls = {}
+  self.hue = 0
+  self.currentBall = 1
+  
+  -- Sprites :-)
+  local height_width = 160
+  for i=0,9 do
+    for j=0,9 do
+      table.insert(self.balls, love.graphics.newQuad(
+        j * height_width, 
+        i * height_width,
+        height_width,
+        height_width,
+        self.ballSheet:getWidth(),
+        self.ballSheet:getHeight()))
+    end
+  end
 end
 
 -- Replace old planet values with new ones. Cool
@@ -96,12 +115,16 @@ function Planet:generate()
   self.mass = logRand(6, -0.5)
   self.gravity = gravity(self.radius, self.mass)
   
-  self.moons = countLowest(3,0,6)
+  self.moons = countLowest(5,0,19)
+  
+  self.hue = (self.temp - minTemp/10) / (maxTemp - minTemp/10) * 5 + 0.3
+  self.hue = 1 - self.hue
+  
+  self.currentBall = math.random(1,100)
   
 end
 
 function Planet:drawMoons()
-  love.graphics.setColor(0,0.2,1)
   for i = 1, self.moons do
     love.graphics.circle("fill",
             self.x + self.pixelRadius*1.3 * math.cos(i/3+3),
@@ -118,11 +141,16 @@ function Planet:draw()
   love.graphics.print("temp:    " .. tostring(round(self.temp, 10)) .. " C", 10, 7)
   love.graphics.print("radius:  " .. tostring(self.radius, 10) .. " RE", 10, 17)
   love.graphics.print("mass:    " .. tostring(round(self.mass, 1000)) .. " ME", 10, 27)
-  love.graphics.print("gravity: " .. tostring(round(self.gravity, 100)) .. " GE", 10, 37)
+  love.graphics.print("gravity: " .. tostring(round(self.gravity, 100)) .. " G", 10, 37)
   love.graphics.print("moons:   " .. tostring(self.moons), 10, 47)
   
-  local hue = (self.temp - minTemp/10) / (maxTemp - minTemp/10) * 5 + 0.3
-  hue = 1 - hue
-  love.graphics.setColor(HSL(hue,1,0.5,1))
-  love.graphics.circle("fill", self.x, self.y, self.pixelRadius)
+  -- temperature color
+  love.graphics.setColor(HSL(self.hue,1,0.5,1))
+  -- sticker backing/border around planet
+  love.graphics.draw(self.border, self.x-self.pixelRadius-2, self.y-self.pixelRadius-2)
+  -- planet
+  love.graphics.draw(self.ballSheet, 
+    self.balls[math.floor(self.currentBall)],
+    self.x-self.pixelRadius,
+    self.y-self.pixelRadius)
 end
