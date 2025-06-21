@@ -15,19 +15,24 @@ function love.load()
     vsync = true
   })
   
+  -- game/interactables
   planet = Planet()
-  output = io.output("out.txt")
+  --output = io.output("out.txt")
   
   hitbox = {}
-  hitbox.width = 60
-  hitbox.height = 20
-  hitbox.x = VIRTUAL_HEIGHT - hitbox.height - 20
-  hitbox.y = VIRTUAL_WIDTH - hitbox.width
+  hitbox.radius = 33
+  hitbox.x = hitbox.radius + 7
+  hitbox.y = VIRTUAL_HEIGHT - hitbox.radius - 7
   
   math.randomseed(os.time())
   
+  -- graphics
   smallFont = love.graphics.newFont("DepartureMono-Regular.otf", 11)
   love.graphics.setFont(smallFont)
+  
+  bgImg = love.graphics.newImage("bg.png")
+  scanlines = love.graphics.newImage("scanlines.png")
+  
 end
 
 function love.keypressed(key)
@@ -43,10 +48,15 @@ end
 
 function love.draw()
   push:apply("start")
-    love.graphics.clear(40/255, 45/255, 52/255, 255/255) -- RGBA
-    love.graphics.setColor(1,0,0)
-    love.graphics.rectangle("fill",hitbox.x,hitbox.y,hitbox.width,hitbox.height)
+    love.graphics.clear(0.1,0.1,0.1) -- RGBA
     planet:draw()
-    --love.graphics.print("Current FPS: " .. tostring(love.timer.getFPS( )), 10, VIRTUAL_HEIGHT-20)
+    planet:drawMoons()
+    --love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), 10, VIRTUAL_HEIGHT-20)
+    love.graphics.setColor(1,1,1,0.2)
+    love.graphics.draw(scanlines)
+    love.graphics.setColor(1,1,1)
+    love.graphics.draw(bgImg)
+    love.graphics.setColor(1,0,0)
+    love.graphics.circle("fill",hitbox.x,hitbox.y,hitbox.radius)
   push:apply("end")
 end

@@ -2,6 +2,9 @@ Planet = Object:extend()
 
 local newton_constant = 6.6743e-11
 
+local minTemp = -275*10
+local maxTemp = 300*10
+
 --[[
   Helper functions for random values and crunching numbers.
 ]]
@@ -44,6 +47,23 @@ local function round(value, decimals)
   return value
 end
 
+-- Converts HSL to RGB. (input and output range: 0 - 1)
+-- copypasted from love2d docs
+local function HSL(h, s, l, a)
+	if s<=0 then return l,l,l,a end
+	h, s, l = h*6, s, l
+	local c = (1-math.abs(2*l-1))*s
+	local x = (1-math.abs(h%2-1))*c
+	local m,r,g,b = (l-.5*c), 0,0,0
+	if h < 1     then r,g,b = c,x,0
+	elseif h < 2 then r,g,b = x,c,0
+	elseif h < 3 then r,g,b = 0,c,x
+	elseif h < 4 then r,g,b = 0,x,c
+	elseif h < 5 then r,g,b = x,0,c
+	else              r,g,b = c,0,x
+	end return r+m, g+m, b+m, a
+end
+
 --[[
   Functions for planets.
 ]]
@@ -55,18 +75,18 @@ function Planet:new()
   self.mass = 0
   self.gravity = 0
   self.moons = 0
+  
+  self.x = VIRTUAL_WIDTH - 100
+  self.y = VIRTUAL_HEIGHT - 100
+  self.pixelRadius = 80
 end
 
 -- Replace old planet values with new ones. Cool
 function Planet:generate()
-  
-  -- Measured in Celsius.
-  local min_temp = -275*10
-  local max_temp = 500*10
   -- Rolls three times and averages results
-  self.temp = (math.random(min_temp, max_temp)+
-               math.random(min_temp, max_temp)+
-               math.random(min_temp, max_temp))/30
+  self.temp = (math.random(minTemp, maxTemp)+
+               math.random(minTemp, maxTemp)+
+               math.random(minTemp, maxTemp))/30
   
   -- These measurements are all in comparison to Earth.
   -- ie. Earth radii, Earth masses, Earth gravity...
@@ -80,15 +100,29 @@ function Planet:generate()
   
 end
 
+function Planet:drawMoons()
+  love.graphics.setColor(0,0.2,1)
+  for i = 1, self.moons do
+    love.graphics.circle("fill",
+            self.x + self.pixelRadius*1.3 * math.cos(i/3+3),
+            self.y + self.pixelRadius*1.3 * math.sin(i/3+3), 
+            self.pixelRadius/10)
+  end
+end
+
 function Planet:update(dt)
-  
 end
 
 function Planet:draw()
   love.graphics.setColor(0,1,0)
-  love.graphics.print("temp:    " .. tostring(round(self.temp, 10)) .. " C", 10, 10)
-  love.graphics.print("radius:  " .. tostring(self.radius, 10) .. " RE", 10, 20)
-  love.graphics.print("mass:    " .. tostring(round(self.mass, 1000)) .. " ME", 10, 30)
-  love.graphics.print("gravity: " .. tostring(round(self.gravity, 100)) .. " GE", 10, 40)
-  love.graphics.print("moons:   " .. tostring(self.moons), 10, 50)
+  love.graphics.print("temp:    " .. tostring(round(self.temp, 10)) .. " C", 10, 7)
+  love.graphics.print("radius:  " .. tostring(self.radius, 10) .. " RE", 10, 17)
+  love.graphics.print("mass:    " .. tostring(round(self.mass, 1000)) .. " ME", 10, 27)
+  love.graphics.print("gravity: " .. tostring(round(self.gravity, 100)) .. " GE", 10, 37)
+  love.graphics.print("moons:   " .. tostring(self.moons), 10, 47)
+  
+  local hue = (self.temp - minTemp/10) / (maxTemp - minTemp/10) * 5 + 0.3
+  hue = 1 - hue
+  love.graphics.setColor(HSL(hue,1,0.5,1))
+  love.graphics.circle("fill", self.x, self.y, self.pixelRadius)
 end
