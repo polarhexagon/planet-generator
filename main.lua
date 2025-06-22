@@ -18,40 +18,46 @@ function love.load()
   planet = Planet()
   hitbox = {}
   hitbox.radius = 33
+  hitbox.dist = 0
   hitbox.x = hitbox.radius + 7
   hitbox.y = VIRTUAL_HEIGHT - hitbox.radius - 7
   hitbox.originX = hitbox.x - hitbox.radius
   hitbox.originY = hitbox.y - hitbox.radius
   hitbox.isPressed = false
   math.randomseed(os.time())
+  mouseX = nil
+  mouseY = nil
   -- graphics
   bgImg = love.graphics.newImage("assets/bg.png")
   scanlines = love.graphics.newImage("assets/scanlines.png")
   button = love.graphics.newImage("assets/button.png")
   smallFont = love.graphics.newFont("assets/DepartureMono-Regular.otf", 11)
   love.graphics.setFont(smallFont)
+  -- audio
+  buttonDown = love.audio.newSource("assets/buttonDown.ogg", "static")
+  buttonUp = love.audio.newSource("assets/buttonUp.ogg", "static")
+end
+
+function love.update(dt)
+  mouseX, mouseY = love.mouse.getPosition()
+  mouseX = mouseX / 3
+  mouseY = mouseY / 3
+  hitbox.dist = dice.getDistance(mouseX, mouseY, hitbox.x, hitbox.y)
+end
+
+function love.mousepressed()
+  if hitbox.dist < hitbox.radius then
+    hitbox.isPressed = true
+    planet:generate()
+    --buttonDown:play()
+  end
 end
 
 function love.mousereleased()
   if hitbox.isPressed then
     hitbox.isPressed = false
-    planet:generate()
+    --buttonUp:play()
   end
-end
-
-function love.update(dt)
-  --planet:generate() -- stress testing
-  --output:write(planet.radius .. "\n")
-  mouse_x, mouse_y = love.mouse.getPosition()
-  -- compensating for vwidth/vheight
-  mouse_x = mouse_x / 3
-  mouse_y = mouse_y / 3
-  if dice.getDistance(mouse_x, mouse_y, hitbox.x, hitbox.y) < hitbox.radius then
-    if love.mouse.isDown(1) then
-      hitbox.isPressed = true
-    end
-  end
-  -- make planet
 end
 
 function love.draw()
@@ -59,7 +65,6 @@ function love.draw()
     love.graphics.clear(0.1,0.1,0.1) -- RGBA
     planet:draw()
     planet:drawMoons()
-    --love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), 10, VIRTUAL_HEIGHT-20)
     love.graphics.setColor(1,1,1,0.2)
     love.graphics.draw(scanlines)
     love.graphics.setColor(1,1,1)
@@ -68,6 +73,8 @@ function love.draw()
     if hitbox.isPressed == false then
       love.graphics.draw(button,hitbox.x-hitbox.radius,hitbox.y-hitbox.radius)
     end
-    --love.graphics.circle("fill",hitbox.x,hitbox.y,hitbox.radius)
+    -- Debug
+    --love.graphics.printf(hitbox.dist,100,100,999)
+    --love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), 10, VIRTUAL_HEIGHT-20)
   push:apply("end")
 end

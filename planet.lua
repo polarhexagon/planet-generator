@@ -1,6 +1,8 @@
 Planet = Object:extend()
 dice = require "dice"
 
+-- Runs once when starting up the game. 
+-- Could run more if you wanted more planets at once.
 function Planet:new()
   -- Blank values to be filled in later
   self.temp = 0
@@ -17,7 +19,7 @@ function Planet:new()
   self.balls = {}
   self.hue = 0
   self.currentBall = 1
-  -- Sprites :-)
+  -- Assigning quads for each planet sprite
   local height_width = 160
   for i=0,9 do
     for j=0,9 do
@@ -45,7 +47,7 @@ function Planet:generate()
   self.radius = dice.countLowest(2, 3, 50)/10
   -- ideal range 0.0041 - 4134
   -- current range 0.001 - 200, avg 0.1-10
-  self.mass = dice.logRand(6, -0.5)
+  self.mass = dice.logRand(3, 0.1)
   self.gravity = dice.gravity(self.radius, self.mass)
   self.moons = dice.countLowest(2,0,6)
   -- more graphics junk
