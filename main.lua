@@ -3,6 +3,7 @@ function love.load()
   push = require "push"
   dice = require "dice"
   require "planet"
+  require "button"
   -- push
   local window_width   = 960
   local window_height  = 720
@@ -16,21 +17,13 @@ function love.load()
   })
   -- game/interactables
   planet = Planet()
-  hitbox = {}
-  hitbox.radius = 33
-  hitbox.dist = 0
-  hitbox.x = hitbox.radius + 7
-  hitbox.y = VIRTUAL_HEIGHT - hitbox.radius - 7
-  hitbox.originX = hitbox.x - hitbox.radius
-  hitbox.originY = hitbox.y - hitbox.radius
-  hitbox.isPressed = false
+  buttonNew = Button(33, 40, VIRTUAL_HEIGHT - 40, "assets/button.png")
   math.randomseed(os.time())
   mouseX = nil
   mouseY = nil
   -- graphics
   bgImg = love.graphics.newImage("assets/bg.png")
   scanlines = love.graphics.newImage("assets/scanlines.png")
-  button = love.graphics.newImage("assets/button.png")
   smallFont = love.graphics.newFont("assets/DepartureMono-Regular.otf", 11)
   love.graphics.setFont(smallFont)
   -- audio
@@ -38,25 +31,23 @@ function love.load()
   buttonUp = love.audio.newSource("assets/buttonUp.ogg", "static")
 end
 
+function love.mousepressed()
+  buttonNew:mousepressed()
+end
+
+function love.mousereleased()
+  buttonNew:mousereleased()
+end
+
 function love.update(dt)
   mouseX, mouseY = love.mouse.getPosition()
   mouseX = mouseX / 3
   mouseY = mouseY / 3
-  hitbox.dist = dice.getDistance(mouseX, mouseY, hitbox.x, hitbox.y)
-end
-
-function love.mousepressed()
-  if hitbox.dist < hitbox.radius then
-    hitbox.isPressed = true
+  buttonNew.dist = dice.getDistance(mouseX, mouseY, buttonNew.x, buttonNew.y)
+  
+  if buttonNew.pressFrame then
+    buttonNew.pressFrame = false
     planet:generate()
-    buttonDown:play()
-  end
-end
-
-function love.mousereleased()
-  if hitbox.isPressed then
-    hitbox.isPressed = false
-    buttonUp:play()
   end
 end
 
@@ -70,9 +61,7 @@ function love.draw()
     love.graphics.setColor(1,1,1)
     love.graphics.draw(bgImg)
     love.graphics.setColor(1,1,1)
-    if hitbox.isPressed == false then
-      love.graphics.draw(button,hitbox.x-hitbox.radius,hitbox.y-hitbox.radius)
-    end
+    buttonNew:draw()
     -- Debug
     --love.graphics.printf(hitbox.dist,100,100,999)
     --love.graphics.print("FPS: " .. tostring(love.timer.getFPS( )), 10, VIRTUAL_HEIGHT-20)
