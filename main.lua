@@ -32,11 +32,10 @@ function love.load()
   love.graphics.setFont(smallFont)
 end
 
-function love.keypressed(key)
-  if key == "space" then
-    hitbox.isPressed = true
-  else
+function love.mousereleased()
+  if hitbox.isPressed then
     hitbox.isPressed = false
+    planet:generate()
   end
 end
 
@@ -50,14 +49,9 @@ function love.update(dt)
   if dice.getDistance(mouse_x, mouse_y, hitbox.x, hitbox.y) < hitbox.radius then
     if love.mouse.isDown(1) then
       hitbox.isPressed = true
-    else
-      hitbox.isPressed = false
     end
   end
   -- make planet
-  if hitbox.isPressed then
-    planet:generate()
-  end
 end
 
 function love.draw()
