@@ -49,14 +49,14 @@ function love.mousepressed()
   if hitbox.dist < hitbox.radius then
     hitbox.isPressed = true
     planet:generate()
-    --buttonDown:play()
+    buttonDown:play()
   end
 end
 
 function love.mousereleased()
   if hitbox.isPressed then
     hitbox.isPressed = false
-    --buttonUp:play()
+    buttonUp:play()
   end
 end
 
