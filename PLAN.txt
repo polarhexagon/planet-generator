@@ -1,6 +1,0 @@
-- Shows up a randomly generated planet on the screen
-- The planet has a temperature, mass, gravity, and moons/rings.
-- The planet has a random appearance based on those stats.
-- - Think Spore!
-- The planet is a 2D image.
-- You can press a button on the screen to generate a new planet.
