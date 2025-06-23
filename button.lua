@@ -11,12 +11,16 @@ function Button:new(rad,x,y,img)
   self.isPressed = false
   self.pressFrame = false
   self.sprite = love.graphics.newImage(img)
+  self.sfx = 0
 end
 
 function Button:mousepressed()
   if self.dist < self.radius then
     self.isPressed = true
-    buttonDown:play()
+    self.sfx = math.random(80,115)
+    self.sfx = self.sfx/100
+    buttonDown:setPitch(self.sfx)
+    buttonDown:clone():play()
     self.pressFrame = 1
   end
 end
@@ -24,7 +28,10 @@ end
 function Button:mousereleased()
   if self.isPressed then
     self.isPressed = false
-    buttonUp:play()
+    self.sfx = math.random(80,115)
+    self.sfx = self.sfx/100
+    buttonUp:setPitch(self.sfx)
+    buttonUp:clone():play()
   end
 end
 

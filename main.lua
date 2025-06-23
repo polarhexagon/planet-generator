@@ -27,8 +27,11 @@ function love.load()
   smallFont = love.graphics.newFont("assets/DepartureMono-Regular.otf", 11)
   love.graphics.setFont(smallFont)
   -- audio
-  buttonDown = love.audio.newSource("assets/buttonDown.ogg", "static")
-  buttonUp = love.audio.newSource("assets/buttonUp.ogg", "static")
+  buttonDown = love.audio.newSource("assets/sfx/buttonDown.ogg", "static")
+  buttonUp = love.audio.newSource("assets/sfx/buttonUp.ogg", "static")
+  ambient = love.audio.newSource("assets/sfx/ambLow.ogg", "stream")
+  ambient:setLooping(true)
+  ambient:play()
 end
 
 function love.mousepressed()

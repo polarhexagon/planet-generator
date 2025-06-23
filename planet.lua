@@ -51,7 +51,7 @@ function Planet:generate()
   self.gravity = dice.gravity(self.radius, self.mass)
   self.moons = dice.countLowest(2,0,6)
   -- more graphics junk
-  self.hue = (self.temp - minTemp/10) / (maxTemp - minTemp/10) * 5 + 0.3
+  self.hue = math.min((self.temp - minTemp/10) / (maxTemp - minTemp/10) * 4.5 + 0.3, 1)
   self.hue = 1 - self.hue
   self.currentBall = math.random(1,100)
 end
